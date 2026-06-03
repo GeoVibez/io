@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoVibe Academy — Bina Aplikasi Peta Web Sendiri + Jana Duit Jadi Rakan Affiliate | RM80 Sahaja</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#FF5733; --coral-lt:#FFF0ED; --orange:#FF8C00; --orange-lt:#FFF5E0;
+  --teal:#00B4A0; --teal-dk:#008F7F; --teal-lt:#E0F7F5;
+  --purple:#7C3AED; --purple-lt:#F3EEFF; --blue:#2563EB; --blue-lt:#EFF6FF;
+  --green:#059669; --green-lt:#ECFDF5; --yellow:#F59E0B; --yellow-lt:#FFFBEB;
+  --dark:#1E293B; --dark2:#334155; --gray:#64748B; --gray-lt:#94A3B8;
+  --line:#E2E8F0; --bg:#F8FAFC; --white:#FFFFFF;
+  --font-head:'Plus Jakarta Sans',sans-serif; --font-body:'Nunito',sans-serif;
+  --r:14px; --r-lg:22px;
+  --shadow:0 4px 24px rgba(0,0,0,0.08); --shadow-lg:0 12px 48px rgba(0,0,0,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--dark);overflow-x:hidden;line-height:1.7;}
+
+/* ── TYPOGRAPHY ── */
+.section-title{font-family:var(--font-head);font-size:clamp(1.7rem,4.5vw,2.6rem);font-weight:900;line-height:1.2;color:var(--dark);}
+.section-sub{font-size:clamp(1rem,2.3vw,1.12rem);color:var(--gray);margin-top:.8rem;line-height:1.8;max-width:580px;margin-left:auto;margin-right:auto;}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-head);font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:50px;margin-bottom:1rem;}
+.badge-coral{background:var(--coral-lt);color:var(--coral);}
+.badge-teal{background:var(--teal-lt);color:var(--teal-dk);}
+.badge-purple{background:var(--purple-lt);color:var(--purple);}
+.badge-orange{background:var(--orange-lt);color:var(--orange);}
+.badge-green{background:var(--green-lt);color:var(--green);}
+.badge-blue{background:var(--blue-lt);color:var(--blue);}
+.container{max-width:920px;margin:0 auto;padding:0 1.25rem;}
+section{padding:5rem 1.25rem;}
+.section-head{text-align:center;margin-bottom:3rem;}
+
+/* ── COUNTDOWN WIDGET (KANAN ATAS) ── */
+#countdown-widget{
+  position:fixed;top:105px;right:16px;z-index:190;
+  background:var(--white);border:1.5px solid var(--line);border-left:4px solid var(--coral);
+  border-radius:var(--r);padding:10px 14px;box-shadow:var(--shadow-lg);
+  text-align:center;min-width:178px;
+}
+.cw-label{font-family:var(--font-head);font-size:.63rem;font-weight:800;color:var(--coral);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.cw-time{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--dark);line-height:1;font-variant-numeric:tabular-nums;}
+.cw-sub{font-size:.63rem;color:var(--gray-lt);margin-top:4px;font-weight:600;}
+
+/* ── NOTIFICATION (KANAN ATAS, BAWAH COUNTDOWN) ── */
+#notif{
+  position:fixed;top:210px;right:16px;left:auto;z-index:9999;
+  max-width:290px;background:var(--white);
+  border:1.5px solid var(--line);border-left:4px solid var(--teal);
+  border-radius:var(--r);padding:12px 15px;
+  display:flex;align-items:center;gap:11px;
+  transform:translateX(160%);transition:transform .5s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:var(--shadow-lg);
+}
+#notif.show{transform:translateX(0);}
+.notif-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:900;font-size:.82rem;flex-shrink:0;}
+.notif-msg{font-size:.78rem;line-height:1.4;color:var(--dark);}
+.notif-msg b{color:var(--teal-dk);}
+.notif-when{font-size:.68rem;color:var(--gray-lt);margin-top:2px;}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:linear-gradient(90deg,var(--coral),var(--orange));
+  text-align:center;padding:10px 1rem;
+  font-family:var(--font-head);font-size:.82rem;font-weight:800;
+  color:var(--white);position:sticky;top:0;z-index:200;letter-spacing:.01em;
+}
+
+/* ── NAV ── */
+nav{background:var(--white);border-bottom:1px solid var(--line);padding:.9rem 1.25rem;position:sticky;top:42px;z-index:150;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--font-head);font-weight:900;font-size:1.05rem;color:var(--dark);text-decoration:none;}
+.logo-box{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;}
+.logo-box svg{width:18px;height:18px;fill:var(--white);}
+.nav-btns{display:flex;gap:8px;}
+.btn-outline{background:transparent;color:var(--teal-dk);border:1.5px solid var(--teal);font-family:var(--font-head);font-weight:700;font-size:.8rem;padding:8px 16px;border-radius:50px;cursor:pointer;text-decoration:none;transition:.2s;}
+.btn-outline:hover{background:var(--teal-lt);}
+.btn-cta-nav{background:linear-gradient(135deg,var(--coral),var(--orange));color:var(--white);font-family:var(--font-head);font-weight:800;font-size:.8rem;padding:8px 18px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;transition:.2s;box-shadow:0 4px 14px rgba(255,87,51,.3);}
+.btn-cta-nav:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{background:var(--white);padding:4.5rem 1.25rem 3.5rem;text-align:center;position:relative;overflow:hidden;}
+.hero-blob1{position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,180,160,.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+.hero-blob2{position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(255,87,51,.1) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+.hero-eyebrow{font-family:var(--font-head);font-size:.75rem;font-weight:800;color:var(--coral);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.9rem;}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.1rem,6vw,3.6rem);font-weight:900;line-height:1.12;max-width:800px;margin:0 auto 1.2rem;color:var(--dark);}
+.grad-text-coral{background:linear-gradient(135deg,var(--coral),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.grad-text-teal{background:linear-gradient(135deg,var(--teal),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(1rem,2.4vw,1.15rem);color:var(--gray);max-width:600px;margin:0 auto 2rem;line-height:1.8;}
+.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:2.5rem;}
+.pill{background:var(--bg);border:1.5px solid var(--line);border-radius:50px;padding:6px 16px;font-size:.82rem;font-weight:600;color:var(--dark2);display:flex;align-items:center;gap:6px;}
+.pill-icon{font-size:.9rem;}
+.cta-group{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:2.2rem;}
+.btn-primary{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--coral),var(--orange));color:var(--white);font-family:var(--font-head);font-weight:900;font-size:1.05rem;padding:16px 38px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 6px 28px rgba(255,87,51,.4);transition:transform .2s,box-shadow .2s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(255,87,51,.5);}
+.btn-teal{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--teal),var(--blue));color:var(--white);font-family:var(--font-head);font-weight:900;font-size:1.05rem;padding:16px 32px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 6px 28px rgba(0,180,160,.35);transition:transform .2s,box-shadow .2s;}
+.btn-teal:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,180,160,.45);}
+.price-hero{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#FFFBEB,#FFF5E0);border:2px solid var(--yellow);border-radius:50px;padding:10px 24px;margin-bottom:2rem;font-family:var(--font-head);}
+.price-hero .old{text-decoration:line-through;color:var(--gray-lt);font-size:.9rem;}
+.price-hero .new{color:var(--orange);font-weight:900;font-size:1.3rem;}
+.price-hero .save{background:var(--orange);color:var(--white);font-size:.7rem;font-weight:900;padding:3px 10px;border-radius:50px;}
+.trust-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding-top:2rem;border-top:1px solid var(--line);margin-top:1rem;}
+.trust-item{display:flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;color:var(--gray);}
+.ti-icon{font-size:1rem;}
+
+/* ── STATS BAR ── */
+.stats-bar{background:linear-gradient(135deg,var(--dark),#0F172A);padding:2.5rem 1.25rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;}
+.stat-item{background:rgba(255,255,255,.04);padding:1.5rem 1rem;text-align:center;}
+.stat-num{font-family:var(--font-head);font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--teal),#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.stat-label{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:4px;font-weight:600;}
+
+/* ── PAIN SECTION ── */
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
+.pain-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--r);padding:1.4rem 1.5rem;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow);transition:transform .25s;}
+.pain-card:hover{transform:translateY(-3px);}
+.pain-ic{width:40px;height:40px;border-radius:10px;background:var(--coral-lt);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.pain-card h4{font-family:var(--font-head);font-weight:800;font-size:.92rem;margin-bottom:4px;}
+.pain-card p{font-size:.8rem;color:var(--gray);line-height:1.55;}
+
+/* ── FOR WHOM ── */
+.forwhom-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:600px){.forwhom-wrap{grid-template-columns:1fr;}}
+.fw-card{border-radius:var(--r-lg);padding:2rem;}
+.fw-yes{background:var(--green-lt);border:2px solid #A7F3D0;}
+.fw-no{background:#FEF2F2;border:2px solid #FECACA;}
+.fw-title{font-family:var(--font-head);font-weight:900;font-size:.95rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px;}
+.fw-yes .fw-title{color:var(--green);}
+.fw-no .fw-title{color:#DC2626;}
+.fw-list{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.fw-list li{font-size:.88rem;padding:9px 13px;border-radius:9px;display:flex;align-items:flex-start;gap:9px;}
+.fw-yes .fw-list li{background:rgba(16,185,129,.08);}
+.fw-no .fw-list li{background:rgba(239,68,68,.06);}
+.fw-list li .fw-emoji{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.fw-list li .fw-name{font-weight:700;font-size:.88rem;}
+.fw-list li .fw-desc{font-size:.75rem;color:var(--gray);margin-top:1px;line-height:1.4;}
+
+/* ── PACKAGE ── */
+.pkg-section{background:var(--white);}
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:2rem;}
+.pkg-item{border-radius:var(--r);padding:1.5rem 1.25rem;text-align:center;border:2px solid transparent;transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden;}
+.pkg-item:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.pkg-item::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.pkg-c1{background:#F0FFF4;} .pkg-c1::before{background:var(--green);}
+.pkg-c2{background:var(--blue-lt);} .pkg-c2::before{background:var(--blue);}
+.pkg-c3{background:var(--yellow-lt);} .pkg-c3::before{background:var(--yellow);}
+.pkg-c4{background:var(--purple-lt);} .pkg-c4::before{background:var(--purple);}
+.pkg-ic{font-size:2rem;margin-bottom:.75rem;}
+.pkg-item h3{font-family:var(--font-head);font-weight:800;font-size:.95rem;margin-bottom:6px;}
+.pkg-item p{font-size:.78rem;color:var(--gray);line-height:1.5;}
+.val-tag{display:inline-block;margin-top:10px;background:var(--orange-lt);color:var(--orange);font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:50px;}
+.value-box{background:linear-gradient(135deg,var(--dark),#0F172A);border-radius:var(--r-lg);padding:2rem;color:var(--white);}
+.val-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;}
+.val-row:not(:last-child){border-bottom:1px solid rgba(255,255,255,.07);}
+.val-row .vl{font-size:.88rem;color:rgba(255,255,255,.65);}
+.val-row .vr{font-family:var(--font-head);font-weight:700;font-size:.9rem;text-decoration:line-through;color:rgba(255,255,255,.4);}
+.val-row.total .vl{font-family:var(--font-head);font-weight:900;font-size:1rem;color:var(--white);}
+.val-row.total .vr{text-decoration:none;color:var(--yellow);font-size:1.3rem;}
+.val-row.final{background:rgba(0,180,160,.12);border-radius:12px;padding:14px;margin-top:6px;}
+.val-row.final .vl{color:var(--teal);font-family:var(--font-head);font-weight:900;font-size:1rem;}
+.val-row.final .vr{text-decoration:none;color:var(--teal);font-size:1.6rem;font-weight:900;}
+
+/* ── HOW IT WORKS ── */
+.hiw-section{background:var(--bg);}
+.hiw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1.5rem;}
+.hiw-step{background:var(--white);border-radius:var(--r);padding:1.75rem 1.25rem;text-align:center;border:1.5px solid var(--line);box-shadow:var(--shadow);position:relative;transition:transform .25s;}
+.hiw-step:hover{transform:translateY(-4px);}
+.hiw-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:900;font-size:.85rem;color:var(--white);margin:0 auto 1rem;}
+.n1{background:var(--coral);} .n2{background:var(--blue);} .n3{background:var(--purple);} .n4{background:var(--green);}
+.hiw-icon{font-size:1.75rem;margin-bottom:.75rem;}
+.hiw-step h4{font-family:var(--font-head);font-weight:800;font-size:.9rem;margin-bottom:5px;}
+.hiw-step p{font-size:.78rem;color:var(--gray);line-height:1.5;}
+
+/* ════════════════════════════════════════
+   BAHAGIAN PROGRAM Affiliate DWI-TAHAP
+   ════════════════════════════════════════ */
+.reseller-section{background:linear-gradient(160deg,#0F172A 0%,#1E1B4B 50%,#0F172A 100%);padding:5.5rem 1.25rem;position:relative;overflow:hidden;}
+.reseller-section::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.reseller-section::after{content:'';position:absolute;top:-120px;right:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.25) 0%,transparent 65%);pointer-events:none;}
+.reseller-hero-text{text-align:center;position:relative;z-index:1;margin-bottom:3.5rem;}
+.reseller-hero-text h2{font-family:var(--font-head);font-size:clamp(1.9rem,5vw,3rem);font-weight:900;line-height:1.15;color:var(--white);margin-bottom:1rem;}
+.reseller-hero-text h2 .hl-yellow{background:linear-gradient(135deg,var(--yellow),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.reseller-hero-text h2 .hl-teal{background:linear-gradient(135deg,var(--teal),#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.reseller-hero-text p{font-size:1.05rem;color:rgba(255,255,255,.65);max-width:580px;margin:0 auto;}
+.persona-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-bottom:3rem;position:relative;z-index:1;}
+.persona-card{border-radius:var(--r-lg);padding:2rem 1.75rem;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,.1);}
+.pc-1{background:linear-gradient(135deg,rgba(255,87,51,.15),rgba(255,140,0,.1));}
+.pc-2{background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(37,99,235,.15));}
+.pc-3{background:linear-gradient(135deg,rgba(0,180,160,.15),rgba(5,150,105,.1));}
+.persona-emoji{font-size:2.5rem;margin-bottom:1rem;}
+.persona-card h3{font-family:var(--font-head);font-weight:900;font-size:1.1rem;color:var(--white);margin-bottom:.5rem;}
+.persona-card .persona-pain{font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.6;}
+.persona-card .persona-win{background:rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--white);font-weight:600;line-height:1.5;}
+.persona-card .persona-win span{color:var(--yellow);}
+.reseller-benefits{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:3rem;position:relative;z-index:1;}
+.rb-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:1.4rem;display:flex;gap:12px;align-items:flex-start;transition:background .25s;}
+.rb-item:hover{background:rgba(255,255,255,.08);}
+.rb-ic{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.rb-c1{background:rgba(245,158,11,.2);} .rb-c2{background:rgba(0,180,160,.2);}
+.rb-c3{background:rgba(124,58,237,.2);} .rb-c4{background:rgba(255,87,51,.2);}
+.rb-c5{background:rgba(5,150,105,.2);} .rb-c6{background:rgba(37,99,235,.2);}
+.rb-item h4{font-family:var(--font-head);font-weight:800;font-size:.9rem;color:var(--white);margin-bottom:4px;}
+.rb-item p{font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.55;}
+.komisyen-box{background:rgba(255,255,255,.04);border:1.5px solid rgba(0,180,160,.3);border-radius:var(--r-lg);padding:2rem;position:relative;z-index:1;margin-bottom:2.5rem;}
+.komisyen-title{font-family:var(--font-head);font-weight:900;font-size:1.1rem;color:var(--white);margin-bottom:1.25rem;text-align:center;}
+.komisyen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;}
+.kom-item{background:rgba(255,255,255,.06);border-radius:12px;padding:1.25rem 1rem;text-align:center;}
+.kom-sales{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.kom-num{font-family:var(--font-head);font-weight:900;font-size:1.5rem;color:var(--yellow);}
+.kom-earn{font-size:.72rem;color:rgba(255,255,255,.55);margin-top:3px;}
+.kom-note{text-align:center;font-size:.78rem;color:rgba(255,255,255,.4);margin-top:12px;}
+.wa-group-box{background:linear-gradient(135deg,rgba(37,211,102,.15),rgba(37,211,102,.05));border:1.5px solid rgba(37,211,102,.25);border-radius:var(--r-lg);padding:2rem;text-align:center;position:relative;z-index:1;}
+.wa-group-box h3{font-family:var(--font-head);font-weight:900;font-size:1.15rem;color:var(--white);margin-bottom:.6rem;}
+.wa-group-box p{font-size:.85rem;color:rgba(255,255,255,.55);margin-bottom:1.25rem;line-height:1.7;}
+.wa-features{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:1.5rem;}
+.wa-feat{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.2);color:rgba(255,255,255,.8);font-size:.75rem;font-weight:700;padding:5px 14px;border-radius:50px;}
+.btn-wa{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:var(--white);font-family:var(--font-head);font-weight:900;font-size:1rem;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,.35);transition:transform .2s,box-shadow .2s;}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(37,211,102,.45);}
+.btn-wa svg{width:22px;height:22px;fill:var(--white);}
+.reseller-steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;position:relative;z-index:1;margin-top:2.5rem;}
+.rs-step{background:rgba(255,255,255,.05);border-radius:var(--r);padding:1.5rem;border:1px solid rgba(255,255,255,.07);text-align:center;}
+.rs-num{font-family:var(--font-head);font-size:2.5rem;font-weight:900;opacity:.15;color:var(--white);line-height:1;margin-bottom:.5rem;}
+.rs-icon{font-size:1.75rem;margin-bottom:.75rem;}
+.rs-step h4{font-family:var(--font-head);font-weight:800;font-size:.88rem;color:var(--white);margin-bottom:5px;}
+.rs-step p{font-size:.76rem;color:rgba(255,255,255,.45);line-height:1.55;}
+
+/* ── VIDEO SECTION ── */
+.video-section{background:var(--white);}
+.video-box{background:var(--bg);border:2px solid var(--line);border-radius:var(--r-lg);padding:2rem;max-width:660px;margin:0 auto;}
+.video-label{font-family:var(--font-head);font-weight:800;font-size:.9rem;color:var(--teal-dk);margin-bottom:1rem;display:block;}
+.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:var(--r);overflow:hidden;background:var(--dark);}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+.video-hint{font-size:.75rem;color:var(--gray-lt);margin-top:8px;}
+.url-input-row{display:flex;gap:8px;margin-bottom:1rem;}
+.url-inp{flex:1;background:var(--white);border:1.5px solid var(--line);border-radius:var(--r);padding:10px 15px;font-family:var(--font-body);font-size:.85rem;color:var(--dark);outline:none;transition:border-color .2s;}
+.url-inp:focus{border-color:var(--teal);}
+.url-inp::placeholder{color:var(--gray-lt);}
+.url-btn{background:var(--teal);color:var(--white);font-family:var(--font-head);font-weight:800;font-size:.82rem;padding:10px 18px;border-radius:var(--r);border:none;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.url-btn:hover{background:var(--teal-dk);}
+.demo-wrap{text-align:center;margin-top:2rem;}
+.btn-demo{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue),var(--purple));color:var(--white);font-family:var(--font-head);font-weight:800;font-size:.95rem;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 6px 24px rgba(37,99,235,.3);transition:transform .2s,box-shadow .2s;}
+.btn-demo:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(37,99,235,.4);}
+
+/* ── TESTIMONI ── */
+.testi-section{background:var(--bg);}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.testi-card{background:var(--white);border-radius:var(--r);border:1.5px solid var(--line);padding:1.5rem;box-shadow:var(--shadow);}
+.testi-stars{font-size:.9rem;margin-bottom:10px;}
+.testi-quote{font-size:.86rem;color:var(--dark2);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:10px;}
+.testi-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:900;font-size:.8rem;color:var(--white);flex-shrink:0;}
+.testi-name{font-family:var(--font-head);font-weight:800;font-size:.85rem;}
+.testi-role{font-size:.72rem;color:var(--gray);}
+
+/* ── BAYARAN (FULL WIDTH) ── */
+.payment-section{background:var(--white);}
+.payment-layout{max-width:100%;margin:0 auto;}
+.bcl-embed-card{background:var(--bg);border:2px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);}
+.bcl-body{padding:1.5rem;}
+#bcl-embed-wrapper{min-height:400px;}
+.alt-payment-note{text-align:center;margin-top:1rem;font-size:.75rem;color:var(--gray-lt);}
+.alt-payment-note a{color:var(--teal-dk);font-weight:700;}
+
+/* ── FAQ ── */
+.faq-section{background:var(--bg);}
+.faq-list{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:8px;}
+.faq-item{background:var(--white);border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.faq-q{padding:1.1rem 1.5rem;font-family:var(--font-head);font-weight:700;font-size:.92rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:color .2s;color:var(--dark);}
+.faq-q:hover{color:var(--teal-dk);}
+.faq-arrow{width:18px;height:18px;flex-shrink:0;stroke:var(--gray-lt);transition:transform .3s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;padding:0 1.5rem;font-size:.86rem;color:var(--gray);line-height:1.75;transition:max-height .55s ease,padding .35s ease;}
+.faq-item.open .faq-a{max-height:1200px;padding:0 1.5rem 1.25rem;}
+
+/* ── PENUTUP CTA ── */
+.final-section{background:linear-gradient(135deg,var(--coral),var(--orange),#FBBF24);text-align:center;padding:5rem 1.25rem;}
+.final-section h2{font-family:var(--font-head);font-weight:900;font-size:clamp(1.8rem,5vw,3rem);color:var(--white);margin-bottom:.8rem;}
+.final-section p{color:rgba(255,255,255,.8);font-size:1rem;margin-bottom:2rem;}
+.final-price{font-family:var(--font-head);font-weight:900;font-size:3.5rem;color:var(--white);margin:1rem 0 .5rem;text-shadow:0 4px 20px rgba(0,0,0,.2);}
+.final-sub{color:rgba(255,255,255,.75);font-size:.9rem;margin-bottom:2.5rem;}
+.btn-white{display:inline-flex;align-items:center;gap:9px;background:var(--white);color:var(--coral);font-family:var(--font-head);font-weight:900;font-size:1.1rem;padding:18px 44px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.25);}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);color:rgba(255,255,255,.5);padding:2.5rem 1.25rem;text-align:center;font-size:.78rem;line-height:1.8;}
+footer .f-logo{font-family:var(--font-head);font-weight:900;color:var(--teal);font-size:1rem;margin-bottom:.5rem;}
+
+/* ── RESPONSIF ── */
+
+/* Tablet & Small Desktop */
+@media(max-width:768px){
+  section{padding:3.5rem 1rem;}
+  .container{padding:0 1rem;}
+  .section-title{font-size:clamp(1.5rem,4vw,2.2rem);}
+  .hero h1{font-size:clamp(1.8rem,5vw,2.8rem);}
+  .hero{padding:3.5rem 1rem 2.5rem;}
+  .hero-sub{font-size:clamp(.92rem,2.2vw,1.05rem);}
+  .pkg-grid{grid-template-columns:repeat(2,1fr);gap:.85rem;}
+  .hiw-grid{grid-template-columns:repeat(2,1fr);gap:1rem;}
+  .testi-grid{grid-template-columns:1fr;}
+  .payment-layout{max-width:100%;}
+  .bcl-body{padding:1rem;}
+  .reseller-section{padding:4rem 1rem;}
+  .reseller-hero-text h2{font-size:clamp(1.6rem,4.5vw,2.4rem);}
+  .persona-grid{grid-template-columns:1fr;}
+  .reseller-benefits{grid-template-columns:1fr;}
+  .reseller-steps-grid{grid-template-columns:repeat(2,1fr);}
+  .faq-q{font-size:.88rem;padding:1rem 1.2rem;}
+  .faq-a{font-size:.84rem;padding:0 1.2rem;}
+  .faq-item.open .faq-a{padding:0 1.2rem 1.2rem;}
+  .final-section{padding:3.5rem 1rem;}
+  .final-price{font-size:2.8rem;}
+  .btn-primary,.btn-teal{font-size:.95rem;padding:14px 28px;}
+  .btn-white{font-size:1rem;padding:16px 36px;}
+}
+
+/* Mobile */
+@media(max-width:480px){
+  section{padding:2.8rem .85rem;}
+  .container{padding:0 .85rem;}
+  .section-title{font-size:clamp(1.35rem,5vw,1.8rem);}
+  .section-sub{font-size:.9rem;margin-top:.6rem;}
+  .hero{padding:2.5rem .85rem 2rem;}
+  .hero h1{font-size:clamp(1.6rem,6.5vw,2.2rem);}
+  .hero-eyebrow{font-size:.68rem;letter-spacing:.08em;}
+  .hero-sub{font-size:.92rem;margin-bottom:1.5rem;}
+  .hero-pills{gap:6px;margin-bottom:1.8rem;}
+  .pill{font-size:.76rem;padding:5px 12px;}
+  .cta-group{flex-direction:column;align-items:stretch;gap:10px;}
+  .btn-primary,.btn-teal{width:100%;justify-content:center;font-size:1rem;padding:16px 20px;border-radius:14px;}
+  .price-hero{padding:8px 18px;}
+  .price-hero .new{font-size:1.15rem;}
+  .trust-bar{gap:12px;padding-top:1.5rem;}
+  .trust-item{font-size:.75rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .stat-num{font-size:1.75rem;}
+  .stat-label{font-size:.72rem;}
+  .pain-grid{grid-template-columns:1fr;gap:.85rem;}
+  .pain-card{padding:1.1rem 1.2rem;}
+  .pain-card h4{font-size:.88rem;}
+  .pain-card p{font-size:.78rem;}
+  .forwhom-wrap{grid-template-columns:1fr;gap:1rem;}
+  .fw-card{padding:1.5rem 1.2rem;}
+  .fw-title{font-size:.9rem;}
+  .fw-list li{padding:8px 10px;}
+  .fw-list li .fw-name{font-size:.84rem;}
+  .fw-list li .fw-desc{font-size:.73rem;}
+  .hiw-grid{grid-template-columns:1fr 1fr;gap:.85rem;}
+  .hiw-step{padding:1.25rem 1rem;}
+  .hiw-step h4{font-size:.84rem;}
+  .hiw-step p{font-size:.74rem;}
+  .pkg-grid{grid-template-columns:1fr 1fr;gap:.75rem;}
+  .pkg-item{padding:1.25rem 1rem;}
+  .pkg-item h3{font-size:.88rem;}
+  .pkg-item p{font-size:.74rem;}
+  .value-box{padding:1.5rem 1.2rem;border-radius:16px;}
+  .val-row .vl{font-size:.82rem;}
+  .val-row .vr{font-size:.84rem;}
+  .val-row.final .vr{font-size:1.35rem;}
+  .persona-grid,.reseller-benefits{grid-template-columns:1fr;}
+  .persona-card{padding:1.5rem 1.25rem;}
+  .persona-card h3{font-size:1rem;}
+  .persona-card .persona-pain{font-size:.8rem;}
+  .persona-card .persona-win{font-size:.8rem;padding:10px 12px;}
+  .rb-item{padding:1.1rem;}
+  .rb-item h4{font-size:.86rem;}
+  .rb-item p{font-size:.76rem;}
+  .komisyen-box{padding:1.5rem 1.1rem;}
+  .komisyen-title{font-size:1rem;}
+  .komisyen-grid{grid-template-columns:1fr 1fr;gap:.75rem;}
+  .kom-num{font-size:1.3rem;}
+  .reseller-steps-grid{grid-template-columns:1fr 1fr;gap:.75rem;}
+  .rs-step{padding:1.2rem 1rem;}
+  .rs-step h4{font-size:.84rem;}
+  .rs-step p{font-size:.73rem;}
+  .wa-group-box{padding:1.5rem 1.2rem;}
+  .wa-group-box h3{font-size:1.05rem;}
+  .wa-group-box p{font-size:.82rem;}
+  .wa-features{gap:6px;}
+  .wa-feat{font-size:.72rem;padding:4px 12px;}
+  .btn-wa{font-size:.92rem;padding:13px 24px;width:100%;justify-content:center;border-radius:14px;}
+  .video-box{padding:1.25rem;}
+  .video-label{font-size:.85rem;}
+  .url-input-row{flex-direction:column;gap:6px;}
+  .url-btn{width:100%;text-align:center;padding:12px;border-radius:10px;}
+  .btn-demo{width:100%;justify-content:center;font-size:.9rem;padding:14px 24px;border-radius:14px;}
+  .testi-grid{grid-template-columns:1fr;gap:.85rem;}
+  .testi-card{padding:1.25rem;}
+  .testi-quote{font-size:.83rem;}
+  .testi-name{font-size:.82rem;}
+  .payment-layout{max-width:100%;}
+  .bcl-embed-card{border-radius:16px;}
+  .bcl-body{padding:.85rem;}
+  .faq-list{gap:6px;}
+  .faq-q{font-size:.86rem;padding:1rem 1.1rem;min-height:52px;}
+  .faq-a{font-size:.82rem;line-height:1.8;}
+  .faq-item.open .faq-a{padding:0 1.1rem 1.1rem;}
+  .final-section{padding:3rem .85rem;}
+  .final-section h2{font-size:clamp(1.5rem,5.5vw,2.2rem);}
+  .final-price{font-size:2.5rem;}
+  .final-sub{font-size:.82rem;}
+  .btn-white{width:100%;justify-content:center;font-size:1rem;padding:16px 24px;border-radius:14px;}
+  .topbar{font-size:.72rem;padding:8px .85rem;}
+  nav{padding:.7rem .85rem;}
+  .logo{font-size:.95rem;}
+  .logo-box{width:30px;height:30px;border-radius:8px;}
+  .btn-cta-nav{font-size:.75rem;padding:7px 14px;}
+  .nav-btns .btn-outline{display:none;}
+  #countdown-widget{min-width:140px;right:8px;top:92px;padding:8px 10px;}
+  #countdown-widget .cw-label{font-size:.58rem;}
+  #countdown-widget .cw-time{font-size:1.2rem;}
+  #countdown-widget .cw-sub{font-size:.58rem;}
+  #notif{top:auto;bottom:14px;right:8px;left:8px;max-width:calc(100% - 16px);transform:translateY(160%);}
+  #notif.show{transform:translateY(0);}
+  .notif-msg{font-size:.75rem;}
+  .notif-when{font-size:.65rem;}
+  footer{padding:2rem .85rem;font-size:.75rem;}
+}
+
+/* Ultra-small mobile */
+@media(max-width:360px){
+  .hero h1{font-size:1.5rem;}
+  .section-title{font-size:1.3rem;}
+  .pkg-grid{grid-template-columns:1fr;}
+  .hiw-grid{grid-template-columns:1fr;}
+  .komisyen-grid{grid-template-columns:1fr;}
+  .reseller-steps-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .btn-primary,.btn-teal,.btn-wa,.btn-white,.btn-demo{font-size:.92rem;padding:14px 18px;}
+  .final-price{font-size:2.2rem;}
+}
+
+/* ── ANIMASI ── */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@keyframes pulse-cta{0%,100%{box-shadow:0 6px 28px rgba(255,87,51,.4);}50%{box-shadow:0 6px 44px rgba(255,87,51,.7);}}
+.pulse{animation:pulse-cta 2.5s infinite;}
+@keyframes glow-pay{
+  0%,100%{box-shadow:0 8px 36px rgba(255,87,51,.5),0 0 0 0 rgba(255,87,51,.4);}
+  50%{box-shadow:0 10px 70px rgba(255,87,51,.9),0 0 100px rgba(255,140,0,.3),0 0 0 10px rgba(255,87,51,.0);}
+}
+.btn-pay-glow{animation:glow-pay 1.8s ease-in-out infinite;transition:transform .2s;}
+.btn-pay-glow:hover{transform:translateY(-3px) scale(1.02);}
+</style>
+</head>
+<body>
+
+<!-- KIRAAN DETIK MASA TAWARAN (KANAN ATAS) -->
+<div id="countdown-widget">
+  <div class="cw-label">⏰ Tawaran Khas Tamat Dalam</div>
+  <div class="cw-time" id="cw-time">00:00:00</div>
+  <div class="cw-sub">Harga RM80 — Peluang Terhad!</div>
+</div>
+
+<!-- POP TANDA BUKTI SOSIAL (KANAN ATAS) -->
+<div id="notif">
+  <div class="notif-av" id="n-av">NA</div>
+  <div>
+    <div class="notif-msg"><b id="n-name">Nur Azlina</b> dari <span id="n-city">Shah Alam</span> baru sahaja <span id="n-act">membeli pakej</span>!</div>
+    <div class="notif-when" id="n-time">2 minit yang lalu</div>
+  </div>
+</div>
+
+<!-- BAR ATAS -->
+<div class="topbar">
+  🔥 Ramai Yang Join Wei — Korang Bila Nak Start Ni? Jadi Affiliate share link je, tak payah susah buat video bagai. Kerja kena Smart zaman sekarang ni, takkan nak hidup sampai berkira-kira hari gaji bulan? ⚡
+</div>
+
+<!-- NAVIGASI -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+      </div>
+      GeoVibe Academy
+    </a>
+    <div class="nav-btns">
+      <a href="#reseller" class="btn-outline">Jadi Rakan Affiliate 💰</a>
+      <a href="#payment" class="btn-cta-nav">Beli Sekarang RM80</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO UTAMA -->
+<section class="hero">
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="hero-eyebrow">✦ GeoVibe Academy — Web Generator GIS 2026 ✦</div>
+    <h1>
+      Bina <span class="grad-text-teal">Aplikasi Peta Web</span> Sendiri<br>
+      <span class="grad-text-coral">Dalam 2 Jam — Tanpa Tahu Satu Baris Kod!</span>
+    </h1>
+    <p class="hero-sub">
+      Zaman AI sekarang ni, kalau kau kuat sembang deraih je, kau hanya selenger yang tak tahu apa-apa pun. Dia cenggini la ek — Apa yang kau kena tahu <strong>SIMPLE</strong> je. Benda alah ni adalah alat, atau bahasa orang Kuala Pilah sebut, <strong>software AI yang kau boleh guna terus</strong>. Kerja kau klik-klik je, pastu dah siap satu sistem! Sistem apa? <strong>Sistem Peta</strong> — orang Serting Ulu cakap <strong>Web Map Apps (Aplikasi Peta)</strong>. Ha, dapat tak? Ok next — apa faedahnya kalau kau beli? Faedahnya, kau bukan setakat guna je! Kalau kau rasa best, kau boleh share link. Link apa? <strong>Link buat duit komisien</strong>. Komisien apa? Komisien <strong>Affiliate</strong>. Tak faham? Kau tahu TikTok Affiliate? Buat video promote barang, hujung-hujung cakap "tekan Beg Kuning". Lebih kurang macam tu — tapi lain tau! Kau share link <strong>takyah buat video pun!</strong> Share kat group WhatsApp kariah masjid ke, group mengaji muslimah ke, group kawan-kawan toksik masa kat U dulu ke. Kalau ada rezeki Hamba Allah yang tekan link tu dan buat pembelian — <strong>rezeki kau dapat komisien RM40!</strong> Aku tak janji bulan bintang tau — Allah bagi rezeki kat kau. Itu kalau sorang, kalau 100 orang? Kau rasa boleh pergi Haji balik hari tak? 😄
+    </p>
+    <div class="hero-pills">
+      <span class="pill"><span class="pill-icon">🗺️</span> Aplikasi Web GIS</span>
+      <span class="pill"><span class="pill-icon">📋</span> Borang Cerapan Digital</span>
+      <span class="pill"><span class="pill-icon">🤖</span> AI Vibe Coding</span>
+      <span class="pill"><span class="pill-icon">💰</span> Program Affiliate Dwi-Tahap</span>
+      <span class="pill"><span class="pill-icon">📱</span> Group Support Whatsapp</span>
+    </div>
+    <div class="cta-group">
+      <a href="#payment" class="btn-primary pulse">🛒 Beli Pakej — RM80 Sahaja</a>
+      <a href="#reseller" class="btn-teal">💰 Jadi Rakan Affiliate</a>
+    </div>
+    <div class="price-hero">
+      <span class="old">RM197</span>
+      <span class="new">RM80.00</span>
+      <span class="save">JIMAT 59%</span>
+    </div>
+    <div class="trust-bar">
+      <span class="trust-item"><span class="ti-icon">🔒</span> Bayaran Selamat &amp; Terenkripsi</span>
+      <span class="trust-item"><span class="ti-icon">📧</span> Produk Dihantar ke E-mel</span>
+      <span class="trust-item"><span class="ti-icon">♾️</span> Akses Seumur Hidup</span>
+      <span class="trust-item"><span class="ti-icon">📱</span> Sokongan WhatsApp</span>
+      <span class="trust-item"><span class="ti-icon">💰</span> Jana Komisyen RM40 Setiap Jualan</span>
+    </div>
+  </div>
+</section>
+
+<!-- BAR STATISTIK -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Pengguna Aktif Setakat 2026</div></div>
+      <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Rating Pengguna Sebenar</div></div>
+      <div class="stat-item"><div class="stat-num">2 Jam</div><div class="stat-label">Siap Aplikasi Pertama</div></div>
+      <div class="stat-item"><div class="stat-num">RM40</div><div class="stat-label">Komisyen Affiliate Setiap Jualan</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TITIK KESAKITAN -->
+<section style="background:var(--bg);">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-coral">😓 MASALAH YANG ANDA HADAPI</span>
+      <h2 class="section-title">Situasi Ini Familiar?</h2>
+      <p class="section-sub">Kalau korang angguk baca ni, korang memang datang ke tempat yang betul</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card fade-in">
+        <div class="pain-ic">💸</div>
+        <div>
+          <h4>Perisian Peta Harga Makan Gaji?</h4>
+          <p>ArcGIS? Lesen profesional boleh cecah ribuan ringgit setahun. Orang biasa macam kita memang tak mampu nak beli — ada je alasan taknak bayar.</p>
+        </div>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="pain-ic">😵</div>
+        <div>
+          <h4>Tutorial YouTube Pening Kepala</h4>
+          <p>Buka je tutorial, terus kena hadap Python, JavaScript, API... tengah-tengah tu terus close tab. Memang bukan untuk orang tanpa latar IT.</p>
+        </div>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="pain-ic">📄</div>
+        <div>
+          <h4>Masih Catat Data Pakai Kertas?</h4>
+          <p>Pergi lapangan bawak borang berkas, balik pejabat masuk balik dalam Excel. Kerja dua kali. Penat badan, penat kepala.</p>
+        </div>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="pain-ic">🏗️</div>
+        <div>
+          <h4>Nak Ubah Sikit Pun Kena Tunggu IT?</h4>
+          <p>Submit ticket, tunggu 3 hari, dapat jawapan "dalam proses". Nak ubah warna pun kena mohon. Kenapa tak boleh buat sendiri je?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNTUK SIAPA -->
+<section style="background:var(--white);">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-teal">👥 UNTUK SIAPA PAKEJ INI?</span>
+      <h2 class="section-title">Jujur Dulu — Ini Untuk Korang Ke Tidak?</h2>
+      <p class="section-sub">Baca baik-baik sebelum beli. Kami lebih suka jujur daripada korang kecewa.</p>
+    </div>
+    <div class="forwhom-wrap">
+      <div class="fw-card fw-yes fade-in">
+        <div class="fw-title">✅ INI UNTUK ANDA jika korang seorang...</div>
+        <ul class="fw-list">
+          <li><span class="fw-emoji">🎓</span><div><div class="fw-name">Pelajar Universiti / Kolej</div><div class="fw-desc">Program Geografi, Alam Sekitar, Perancangan Bandar atau Kejuruteraan Awam yang nak buat projek pemetaan</div></div></li>
+          <li><span class="fw-emoji">👨‍🏫</span><div><div class="fw-name">Pensyarah &amp; Pendidik</div><div class="fw-desc">Yang nak bina platform peta interaktif untuk kelas tanpa bergantung pada IT</div></div></li>
+          <li><span class="fw-emoji">📐</span><div><div class="fw-name">Jurukur Tanah &amp; Perancang Bandar</div><div class="fw-desc">Yang nak borang cerapan digital dan paparan data spatial tanpa kena coding sendiri</div></div></li>
+          <li><span class="fw-emoji">🌏</span><div><div class="fw-name">Pegawai GIS / Juruspatial</div><div class="fw-desc">Yang nak tingkatkan kemahiran GIS web tapi tak ada masa nak belajar pengaturcaraan dari scratch</div></div></li>
+          <li><span class="fw-emoji">💼</span><div><div class="fw-name">Mana-Mana Profesional Yang Nak Keluar Dari Excel</div><div class="fw-desc">Korang ada data, korang nak tunjukkan atas peta — tapi selama ini tak tahu macam mana</div></div></li>
+          <li><span class="fw-emoji">💰</span><div><div class="fw-name">Sesiapa Yang Nak Jana Pendapatan Sampingan</div><div class="fw-desc">Daftar Affiliate, kongsi pautan — RM40 komisyen masuk setiap kali ada orang beli. Boleh buat dari rumah.</div></div></li>
+        </ul>
+      </div>
+      <div class="fw-card fw-no fade-in">
+        <div class="fw-title" style="color:#DC2626;">❌ BUKAN untuk korang jika...</div>
+        <ul class="fw-list">
+          <li><span class="fw-emoji">💻</span><div><div class="fw-name">Pembangun Web / Software Engineer</div><div class="fw-desc">Korang dah terlampau advance untuk pakej ini. Kemahiran korang jauh lebih tinggi daripada yang kami ajar.</div></div></li>
+          <li><span class="fw-emoji">🖥️</span><div><div class="fw-name">Pakar IT &amp; Pengaturcara Berpengalaman</div><div class="fw-desc">Kandungan ini direka untuk orang bukan IT. Kalau korang dah mahir coding, ini buang masa korang.</div></div></li>
+          <li><span class="fw-emoji">🏢</span><div><div class="fw-name">Syarikat Dengan Bajet Besar</div><div class="fw-desc">Korang lebih sesuai upah pembangun profesional buat sistem korporat penuh. Ini bukan untuk skala itu.</div></div></li>
+        </ul>
+        <div style="margin-top:1rem;padding:12px;background:rgba(239,68,68,.06);border-radius:9px;font-size:.78rem;color:var(--gray);line-height:1.55;">
+          ⚠️ Kalau korang dalam kategori atas, pakej ini mungkin tak bagi nilai yang korang jangkakan. Kami utamakan kejujuran daripada sekadar nak jual.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARA KERJA -->
+<section class="hiw-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-blue">⚡ MACAM MANA IA BERFUNGSI</span>
+      <h2 class="section-title">4 Langkah — Dari Zero Ke Aplikasi Peta Sendiri</h2>
+      <p class="section-sub">Tak percaya semudah ini? Cuba tengok sendiri — orang lain dah buat dalam 2 jam.</p>
+    </div>
+    <div class="hiw-grid">
+      <div class="hiw-step fade-in">
+        <div class="hiw-num n1">1</div>
+        <div class="hiw-icon">🛒</div>
+        <h4>Bayar &amp; Terima Pakej</h4>
+        <p>Bayar RM80, hantar bukti ke WhatsApp. Dalam 30 minit, semua fail masuk ke e-mel korang.</p>
+      </div>
+      <div class="hiw-step fade-in">
+        <div class="hiw-num n2">2</div>
+        <div class="hiw-icon">📖</div>
+        <h4>Buka E-Book, Faham Asas</h4>
+        <p>Panduan bergambar A–Z. Tak perlu hafal — baca step, ikut step. Ulang bila-bila masa korang nak.</p>
+      </div>
+      <div class="hiw-step fade-in">
+        <div class="hiw-num n3">3</div>
+        <div class="hiw-icon">▶️</div>
+        <h4>Tonton Video, Ikut Terus</h4>
+        <p>Tengok apa yang kami buat, ikut dalam masa yang sama. Web Generator + Prompt AI buat kerja berat.</p>
+      </div>
+      <div class="hiw-step fade-in">
+        <div class="hiw-num n4">4</div>
+        <div class="hiw-icon">🌐</div>
+        <h4>Aplikasi Peta Korang — Siap Tayang!</h4>
+        <p>Ada pautan web, boleh buka dari mana-mana peranti. Tunjuk kat supervisor, kawan, atau post kat LinkedIn.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KANDUNGAN PAKEJ -->
+<section class="pkg-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-orange">📦 APA YANG ANDA DAPAT</span>
+      <h2 class="section-title">Dalam RM80 Tu, Korang Dapat Semua Ni</h2>
+      <p class="section-sub">Satu pakej lengkap — tak perlu cari tools lain, tak perlu bayar tambahan.</p>
+    </div>
+    <div class="pkg-grid">
+      <div class="pkg-item pkg-c1 fade-in">
+        <div class="pkg-ic">⚙️</div>
+        <h3>Web Generator — Mesin Pembina Aplikasi</h3>
+        <p>Ini "otak" pakej ini. Masuk data kawasan atau lokasi korang → tekan generate → aplikasi peta web terus siap. Tak perlu tulis satu baris kod pun.</p>
+        <span class="val-tag">Nilai: RM79</span>
+      </div>
+      <div class="pkg-item pkg-c2 fade-in">
+        <div class="pkg-ic">💬</div>
+        <h3>Prompt AI Sedia Guna</h3>
+        <p>Arahan AI yang dah kami uji &amp; perhalus. Copy-paste je ke ChatGPT atau Claude — AI faham terus apa yang korang nak buat. Tak perlu meneka-neka.</p>
+        <span class="val-tag">Nilai: RM49</span>
+      </div>
+      <div class="pkg-item pkg-c3 fade-in">
+        <div class="pkg-ic">📚</div>
+        <h3>E-Book Panduan Bergambar A–Z</h3>
+        <p>Setiap langkah ada gambar. Boleh baca dari phone, tablet atau laptop — dalam talian mahupun luar talian. Bila tak faham, scroll balik semula.</p>
+        <span class="val-tag">Nilai: RM39</span>
+      </div>
+      <div class="pkg-item pkg-c4 fade-in">
+        <div class="pkg-ic">🎬</div>
+        <h3>Video Tutorial Ikut &amp; Tiru</h3>
+        <p>Tengok apa yang kami buat, ikut dalam masa yang sama. Sesuai untuk pemula total — tak ada terma teknikal yang pening kepala.</p>
+        <span class="val-tag">Nilai: RM30</span>
+      </div>
+    </div>
+    <div class="value-box">
+      <div class="val-row"><span class="vl">Web Generator — Mesin Pembina Aplikasi</span><span class="vr">RM79</span></div>
+      <div class="val-row"><span class="vl">Prompt AI Sedia Guna</span><span class="vr">RM49</span></div>
+      <div class="val-row"><span class="vl">E-Book Panduan Bergambar A–Z</span><span class="vr">RM39</span></div>
+      <div class="val-row"><span class="vl">Video Tutorial Ikut &amp; Tiru</span><span class="vr">RM30</span></div>
+      <div class="val-row total"><span class="vl">📦 Jumlah Nilai Sebenar</span><span class="vr">RM197</span></div>
+      <div class="val-row final"><span class="vl">🎉 Harga Korang Hari Ini (2026)</span><span class="vr">RM80.00</span></div>
+    </div>
+    <div style="text-align:center;margin-top:2rem;">
+      <a href="#payment" class="btn-primary">Nak Semua Ni? Bayar RM80 Sekarang →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     PROGRAM RAKAN Affiliate DWI-TAHAP 2026
+     ════════════════════════════════════════════════════ -->
+<section class="reseller-section" id="reseller">
+  <div class="container" style="position:relative;z-index:2;">
+
+    <!-- Teks Hero Affiliate -->
+    <div class="reseller-hero-text">
+      <span class="badge" style="background:rgba(245,158,11,.2);color:var(--yellow);">💰 PROGRAM RAKAN Affiliate DWI-TAHAP — TERBUKA SEKARANG</span>
+      <h2>
+        Dah Banyak Kali Terlepas<br>
+        Peluang Buat Duit Online?<br>
+        <span class="hl-yellow">Kali Ini — Semudah Share Link.</span><br>
+        <span class="hl-teal">RM40 Masuk. Dua Kali. Serius.</span>
+      </h2>
+      <p>
+        Ini bukan MLM. Ini bukan scam. Program <strong style="color:rgba(255,255,255,.9);">Rakan Affiliate GeoVibe</strong> mudah je — korang share, orang beli, <strong style="color:rgba(255,255,255,.9);">korang dapat RM40 (50%)</strong> terus. Yang lebih best? Ini program <strong style="color:rgba(255,255,255,.9);">Dwi-Tahap</strong> — bila kawan yang korang ajak join pun berjaya jual, korang dapat komisyen <em>lagi</em> tanpa buat apa-apa tambahan. Dua punca duit. Satu usaha. Tiada modal besar diperlukan.
+      </p>
+    </div>
+
+    <!-- Kad Persona -->
+    <div class="persona-grid">
+      <div class="persona-card pc-1 fade-in">
+        <div class="persona-emoji">👔</div>
+        <h3>Pekerja 8 Pagi – 5 Petang</h3>
+        <p class="persona-pain">"Habis waktu kerja, balik rumah penat. Nak berniaga tapi dah tak ada tenaga. Tengok orang lain buat duit online, rasa macam tertinggal je..."</p>
+        <div class="persona-win">✅ Jadi Rakan Affiliate GeoVibe — <span>share pautan masa rehat kantin pun jadi.</span> Korang masih kerja seperti biasa, komisyen RM40 masuk walaupun korang tengah tidur.</div>
+      </div>
+      <div class="persona-card pc-2 fade-in">
+        <div class="persona-emoji">👨‍👩‍👧‍👦</div>
+        <h3>Suami &amp; Bapa Keluarga</h3>
+        <p class="persona-pain">"Anak ada 3, bil bertimbun. Nak buat side income tapi takut mengganggu masa keluarga. Isteri pun dah mula tanya soalan..."</p>
+        <div class="persona-win">✅ Komisyen Dwi-Tahap bermakna <span>jualan sendiri (Tahap 1)</span> + jualan kawan yang korang ajak <span>(Tahap 2)</span>. Urus dari telefon, masa dengan keluarga tetap terjaga.</div>
+      </div>
+      <div class="persona-card pc-3 fade-in">
+        <div class="persona-emoji">🙋</div>
+        <h3>Tak Pernah Jual Apa-Apa Online?</h3>
+        <p class="persona-pain">"Pernah cuba dulu, tak jadi. Rasa macam bukan rezeki jual online. Tak tahu nak mula dari mana, takut rugi masa..."</p>
+        <div class="persona-win">✅ Kami sedia <span>skrip caption siap pakai, gambar promosi dah design</span> &amp; latihan penuh dalam Group WhatsApp — pemula boleh mula hari ini juga!</div>
+      </div>
+    </div>
+
+    <!-- Faedah Rakan Affiliate -->
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <h3 style="font-family:var(--font-head);font-weight:900;font-size:1.4rem;color:var(--white);">🎯 Kenapa Program Affiliate GeoVibe Ni Beza?</h3>
+    </div>
+    <div class="reseller-benefits">
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c1">💵</div>
+        <div>
+          <h4>RM40 Tetap — Setiap Jualan, Tanpa Tapi</h4>
+          <p>Ada orang klik pautan Affiliate korang dan beli pakej? RM40 terus masuk. Tiada threshold minimum, tiada commission yang berbelit. Beli = RM40. Sesimple tu.</p>
+        </div>
+      </div>
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c2">📦</div>
+        <div>
+          <h4>Zero Stok, Zero Risiko, Zero Modal</h4>
+          <p>Produk digital sepenuhnya. Tiada stok nak simpan, tiada barang nak pos, tiada duit modal kena keluar dulu. Daftar percuma — mula hari ni juga.</p>
+        </div>
+      </div>
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c3">🤝</div>
+        <div>
+          <h4>Group WhatsApp Affiliate — Kami Pegang Tangan</h4>
+          <p>Korang tak keseorangan. Masuk group, dapat skrip caption, gambar promosi siap design, tip close sale. Dari langkah pertama sampai jualan pertama, kami ada.</p>
+        </div>
+      </div>
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c4">⏰</div>
+        <div>
+          <h4>Komisyen Tak Tidur — Walaupun Korang Tidur</h4>
+          <p>Pukul 11 malam dalam katil? Masa rehat? Pautan korang aktif 24 jam. Share sekali, biarkan link buat kerja. Korang rehat, duit jalan.</p>
+        </div>
+      </div>
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c5">🎓</div>
+        <div>
+          <h4>Tak Pernah Jual Online Pun Tak Apa</h4>
+          <p>Kami ada modul latihan dari zero. Yang penting korang ada telefon, ada WhatsApp, dan ada semangat nak cuba — itu dah cukup untuk bermula.</p>
+        </div>
+      </div>
+      <div class="rb-item fade-in">
+        <div class="rb-ic rb-c6">🔗</div>
+        <div>
+          <h4>Dwi-Tahap = Dua Punca Duit, Satu Usaha</h4>
+          <p>Jualan sendiri dapat RM40 (Tahap 1). Kawan yang korang ajak join pun berjaya jual? Korang dapat komisyen <em>lagi</em> secara automatik (Tahap 2). Lebih ramai jaringan korang = lebih banyak masuk.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kalkulator Komisyen -->
+    <div class="komisyen-box">
+      <div class="komisyen-title">💡 Kira Sendiri — Berapa Korang Boleh Jana Sebulan?</div>
+
+      <!-- Label Tahap 1 -->
+      <div style="font-size:.78rem;color:rgba(255,255,255,.55);text-align:center;margin-bottom:.85rem;font-weight:700;letter-spacing:.05em;">
+        🥇 TAHAP 1 — Jualan Terus Korang: RM40.00 Tetap Setiap Jualan
+      </div>
+      <div class="komisyen-grid">
+        <div class="kom-item">
+          <div class="kom-sales">5 jualan / bulan</div>
+          <div class="kom-num" id="k1">RM—</div>
+          <div class="kom-earn">komisyen / bulan</div>
+        </div>
+        <div class="kom-item">
+          <div class="kom-sales">10 jualan / bulan</div>
+          <div class="kom-num" id="k2">RM—</div>
+          <div class="kom-earn">komisyen / bulan</div>
+        </div>
+        <div class="kom-item">
+          <div class="kom-sales">20 jualan / bulan</div>
+          <div class="kom-num" id="k3">RM—</div>
+          <div class="kom-earn">komisyen / bulan</div>
+        </div>
+        <div class="kom-item">
+          <div class="kom-sales">50 jualan / bulan</div>
+          <div class="kom-num" id="k4">RM—</div>
+          <div class="kom-earn">komisyen / bulan</div>
+        </div>
+      </div>
+
+      <!-- Penerangan Tahap 2 -->
+      <div style="margin-top:1.5rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:1.1rem 1.25rem;">
+        <div style="font-family:var(--font-head);font-weight:900;font-size:.95rem;color:var(--yellow);margin-bottom:.6rem;">
+          🥈 TAHAP 2 — Komisyen Dari Jaringan Korang (Ini Yang Ramai Tak Tahu!)
+        </div>
+        <div style="font-size:.83rem;color:rgba(255,255,255,.7);line-height:1.75;">
+          Bila kawan yang korang ajak join sebagai Rakan Affiliate berjaya membuat jualan, <strong style="color:var(--white);">korang pun dapat komisyen tambahan secara automatik</strong> — walaupun korang tak buat apa-apa waktu tu. Namanya <strong style="color:var(--yellow);">pendapatan pasif dwi-tahap</strong>: jaringan korang besar, wang masuk berlipat kali ganda. Korang bina sekali, sistem yang kerja.
+        </div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.6rem;">
+          * Kadar komisyen Tahap 2 akan dimaklumkan terus oleh admin melalui WhatsApp. Hubungi kami untuk butiran lanjut.
+        </div>
+      </div>
+
+      <div class="kom-note">* Pengiraan berdasarkan RM40.00 komisyen tetap per jualan (50% daripada harga pakej RM80.00)</div>
+    </div>
+
+    <!-- Langkah-Langkah Daftar -->
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <h3 style="font-family:var(--font-head);font-weight:900;font-size:1.3rem;color:var(--white);">🚀 Nak Mula? 4 Langkah — Dalam 10 Minit Dah Boleh Start</h3>
+    </div>
+    <div class="reseller-steps-grid">
+      <div class="rs-step fade-in">
+        <div class="rs-num">01</div>
+        <div class="rs-icon">📲</div>
+        <h4>WhatsApp Kami — 2 Minit Je</h4>
+        <p>Tekan butang hijau di bawah. Beritahu admin korang berminat nak join Program Affiliate GeoVibe 2026.</p>
+      </div>
+      <div class="rs-step fade-in">
+        <div class="rs-num">02</div>
+        <div class="rs-icon">📋</div>
+        <h4>Isi Borang — 5 Minit Siap</h4>
+        <p>Admin hantar borang ringkas. Isi nama, nombor, cara terima komisyen. Proses mudah, tak sampai 5 minit.</p>
+      </div>
+      <div class="rs-step fade-in">
+        <div class="rs-num">03</div>
+        <div class="rs-icon">🔗</div>
+        <h4>Dapat Link Unik + Kit Promosi</h4>
+        <p>Terima pautan Affiliate korang sendiri plus bahan promosi siap guna dalam Group WhatsApp eksklusif kami.</p>
+      </div>
+      <div class="rs-step fade-in">
+        <div class="rs-num">04</div>
+        <div class="rs-icon">💰</div>
+        <h4>Share &amp; Tengok Komisyen Masuk!</h4>
+        <p>Share kat WhatsApp, Facebook, TikTok atau mana-mana platform. Setiap klik dan beli = RM40 masuk ke akaun korang.</p>
+      </div>
+    </div>
+
+    <!-- Kumpulan WhatsApp Affiliate -->
+    <div class="wa-group-box" id="wa-group" style="margin-top:2.5rem;">
+      <h3>🔒 Group Eksklusif — Rakan Affiliate GeoVibe Sahaja</h3>
+      <p>
+        Kami ada Group WhatsApp khas untuk Rakan Affiliate GeoVibe —<br>
+        lengkap dengan skrip caption siap guna, grafik promosi dah design, tip pemasaran dan sokongan penuh dari admin setiap hari.
+      </p>
+      <div class="wa-features">
+        <span class="wa-feat">✅ Skrip Jualan Siap Guna</span>
+        <span class="wa-feat">✅ Bahan Grafik Promosi</span>
+        <span class="wa-feat">✅ Tip Pemasaran Terkini</span>
+        <span class="wa-feat">✅ Sokongan Admin 24/7</span>
+        <span class="wa-feat">✅ Komuniti Affiliate Aktif</span>
+      </div>
+      <a href="https://wa.me/601172397389?text=Salam%20Admin%20GeoVibe!%20Saya%20berminat%20untuk%20menyertai%20Program%20Rakan%20Affiliate%20GeoVibe%20Academy%202026.%20Boleh%20saya%20mendapatkan%20maklumat%20lanjut%3F%20%F0%9F%99%8F" target="_blank" class="btn-wa">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Saya Nak Daftar Jadi Rakan Affiliate! 💰
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- VIDEO TUTORIAL -->
+<section class="video-section" id="video-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-purple">▶️ TONTON PERCUMA</span>
+      <h2 class="section-title">Tengok Dulu Baru Beli — Kami Tak Takut</h2>
+      <p class="section-sub">Cuba demo percuma. Kalau lepas tengok korang rasa tak berbaloi, jangan beli. Tapi kami rasa korang akan senyum sendiri.</p>
+    </div>
+    <div class="video-box">
+      <label class="video-label">📹 Video Tutorial — Pratonton Percuma:</label>
+      <div class="video-wrap">
+        <iframe id="main-video-iframe" src="https://drive.google.com/file/d/192V_YVIGdzYMmUOHGyw38dLv3-RLqV3X/preview" allow="autoplay" allowfullscreen></iframe>
+      </div>
+
+    </div>
+    <div class="demo-wrap">
+      <p style="color:var(--gray);font-size:.9rem;margin-bottom:1rem;">Nak rasa sendiri macam mana aplikasi peta web ni berfungsi? Demo percuma — tak perlu log masuk pun.</p>
+      <a href="https://sites.google.com/view/hubgis/webgiz" target="_blank" class="btn-demo">
+        🌐 Cuba Demo &amp; Trial PERCUMA →
+      </a>
+      <p style="font-size:.75rem;color:var(--gray-lt);margin-top:.75rem;">Demo terbuka tanpa perlu log masuk. Cuba sekarang!</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONI -->
+<section class="testi-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-green">⭐ APA KATA MEREKA</span>
+      <h2 class="section-title">Orang Dah Cuba — Ini Kata Diorang</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-in">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"Saya tidak menyangka boleh membina aplikasi peta sendiri! Dalam masa 2 jam sahaja sudah ada web GIS untuk projek akhir saya. Sangat berbaloi dengan harga RM80!"</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,var(--teal),var(--blue));">NF</div>
+          <div><div class="testi-name">Nur Farahana</div><div class="testi-role">Pelajar UiTM, Sains Geografi</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"Saya bekerja 8 hingga 5, dan sudah menjadi Rakan Affiliate GeoVibe sejak bulan lalu. Bulan pertama sudah memperoleh lebih RM400 komisyen hanya dengan berkongsi pautan dalam kumpulan WhatsApp rakan-rakan!"</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,var(--coral),var(--orange));">HZ</div>
+          <div><div class="testi-name">Hazrul Azmi</div><div class="testi-role">Rakan Affiliate GeoVibe, Selangor</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"Sebagai suami dengan 3 anak kecil, masa saya sangat terhad. Alhamdulillah, program Affiliate dwi-tahap ini boleh diuruskan dari telefon. Isteri pun menyokong kerana tidak mengganggu masa bersama keluarga!"</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,var(--purple),var(--blue));">RH</div>
+          <div><div class="testi-name">Roslan Hamdan</div><div class="testi-role">Rakan Affiliate GeoVibe, Kelantan</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BAYARAN -->
+<section class="payment-section" id="payment">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-green">💳 TEMPAH PAKEJ</span>
+      <h2 class="section-title">Bayar Sekali, Lifetime — Akses Seumur Hidup.</h2>
+      <p class="section-sub">Tekan butang di bawah — proses selamat &amp; terenkripsi. Fail terus masuk e-mel korang dalam 30 minit.</p>
+    </div>
+    <div style="text-align:center;padding:2.5rem 1rem 1.5rem;">
+      <a href="https://safuandigital.bcl.my/form/borang-jualan"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn-pay-glow"
+         style="display:inline-flex;align-items:center;justify-content:center;gap:14px;
+                background:linear-gradient(135deg,var(--coral),var(--orange));
+                color:var(--white);font-family:var(--font-head);font-weight:900;
+                font-size:1.35rem;padding:26px 56px;border-radius:50px;
+                text-decoration:none;cursor:pointer;
+                max-width:500px;width:100%;">
+        🛒 Klik Sini Untuk Buat Pembayaran
+      </a>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-top:1.5rem;">
+        <span style="font-size:.8rem;color:var(--gray);display:flex;align-items:center;gap:6px;">🔒 Bayaran Selamat &amp; Terenkripsi</span>
+        <span style="font-size:.8rem;color:var(--gray);display:flex;align-items:center;gap:6px;">📧 Fail Dihantar ke E-mel dalam 30 Minit</span>
+        <span style="font-size:.8rem;color:var(--gray);display:flex;align-items:center;gap:6px;">↗️ Akan Dibuka di Tab Baru</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOALAN LAZIM -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-coral">❓ SOALAN LAZIM</span>
+      <h2 class="section-title">Ada Soalan? Jawapan Kami Dah Sedia</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Kena tahu coding atau pengaturcaraan tak sebelum beli?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Langsung tak perlu! Pakej ini memang direka untuk orang yang tak ada latar belakang IT langsung. Web Generator dan Prompt yang kami sediakan dah buat kerja berat tu — korang cuma ikut arahan je, step by step.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Apakah beza Komisyen Tahap 1 dan Tahap 2 dalam Program Affiliate ni?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Mudah je — bayangkan macam ni:<br><br><strong>Tahap 1 (Hasil Jualan Sendiri — RM40):</strong> Korang share pautan Affiliate korang kat kawan atau media sosial. Ada orang klik dan beli pakej GeoVibe RM80? RM40 terus masuk poket korang. Korang buat kerja, korang dapat duit.<br><br><strong>Tahap 2 (Duit Masuk Goyang Kaki):</strong> Ini yang paling best. Katakan korang ajak Ali join sekali jadi Rakan Affiliate. Bila Ali pula berjaya jual kepada orang lain, Ali dapat RM40 dia... dan korang dapat komisyen tambahan secara automatik! Walaupun masa tu korang tengah tidur, tengah kerja atau tengah layan anak — duit tetap masuk sebab sistem rekod jualan Ali sebagai jaringan korang.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Berapa lama nak siapkan satu aplikasi peta web?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Biasanya 2 hingga 6 jam untuk aplikasi asas — bergantung pada berapa banyak data korang ada. Dengan Web Generator yang kami sediakan, prosesnya jauh lebih laju berbanding buat dari scratch. Orang lain yang dah cuba siap dalam 2 jam je pada percubaan pertama.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Ada kos tambahan lain selepas beli pakej ni?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Bayaran sekali sahaja — RM80.00. Untuk hosting, korang boleh guna perkhidmatan percuma seperti GitHub Pages atau Google Apps Script. Tak perlu bayar yuran bulanan untuk permulaan. Bila dah besar nanti, baru fikirkan hosting berbayar — tapi tu urusan masa hadapan.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Macam mana nak daftar jadi Rakan Affiliate?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Tekan butang "Saya Nak Daftar Jadi Rakan Affiliate" dan WhatsApp kami. Admin akan pandukan korang melalui proses pendaftaran yang ringkas — tak sampai 10 minit pun. Selesai daftar, terus masuk Group WhatsApp Affiliate eksklusif kami dengan semua bahan promosi sedia ada.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Akses pakej ni untuk berapa lama?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Akses seumur hidup. Fail masuk e-mel, terus jadi milik korang sepenuhnya. Tiada tarikh luput, tiada yuran langganan tahunan. Bayar sekali, guna selama-lamanya.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PENUTUP CTA -->
+<section class="final-section">
+  <div class="container">
+    <span class="badge" style="background:rgba(255,255,255,.25);color:var(--white);">🔥 MASA UNTUK AMBIL TINDAKAN</span>
+    <h2>Dua Pintu Terbuka. Pilih Satu. Atau Dua-Dua.</h2>
+    <p>Beli pakej — bina aplikasi peta web sendiri dalam 2 jam. Atau daftar Affiliate — kongsi pautan, komisyen RM40 masuk setiap jualan. Atau buat dua-dua sekarang. Terpulang.</p>
+    <div class="final-price">RM80.00</div>
+    <p class="final-sub">Bayar sekali • Akses Seumur Hidup • Masuk E-mel dalam 30 Minit • Komisyen Affiliate RM40 Setiap Jualan</p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;">
+      <a href="#payment" class="btn-white">🛒 Beli Pakej — RM80 Sekarang</a>
+      <a href="#wa-group" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);color:var(--white);border:2px solid rgba(255,255,255,.4);font-family:var(--font-head);font-weight:800;font-size:1rem;padding:16px 30px;border-radius:50px;text-decoration:none;transition:.2s;">💰 Daftar Rakan Affiliate Sekarang</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-top:2rem;opacity:.8;">
+      <span style="font-size:.8rem;color:var(--white);font-weight:600;">🔒 Bayaran Selamat</span>
+      <span style="font-size:.8rem;color:var(--white);font-weight:600;">📧 Dihantar ke E-mel</span>
+      <span style="font-size:.8rem;color:var(--white);font-weight:600;">♾️ Akses Seumur Hidup</span>
+      <span style="font-size:.8rem;color:var(--white);font-weight:600;">💰 Komisyen Dwi-Tahap</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">GeoVibe Academy</div>
+  <div>Pakej Vibe Coding GIS — Bina Aplikasi Peta Web Sendiri, Tanpa Tahu Satu Baris Kod</div>
+  <div style="margin-top:6px;">
+    📱 WhatsApp: <a href="https://wa.me/601172397389" style="color:var(--teal);font-weight:700;">011-72397389</a>
+    &nbsp;|&nbsp;
+    💰 Program Rakan Affiliate: RM40 Komisyen / Jualan (50%)
+  </div>
+  <div style="margin-top:4px;">
+    🌐 Demo: <a href="https://sites.google.com/view/hubgis/webgiz" target="_blank" style="color:var(--teal);">sites.google.com/view/hubgis/webgiz</a>
+  </div>
+  <div style="margin-top:14px;font-size:.7rem;color:rgba(255,255,255,.25);">
+    © 2026 GeoVibe Academy. Hak Cipta Terpelihara.<br>
+    Produk digital — tiada pemulangan setelah kandungan dihantar kepada pembeli.
+  </div>
+</footer>
+
+<!-- SKRIP BCL PEMBAYARAN -->
+<script src="https://bcl.my/js/bc-encrypted-payment-embed.js"></script>
+
+<script>
+// ════════════════════════════════════════
+// KIRAAN DETIK MASA TAWARAN
+// ════════════════════════════════════════
+(function() {
+  const h = Math.floor(Math.random() * 8) + 8; // 8–15 jam rawak setiap sesi
+  const target = Date.now() + h * 3600 * 1000;
+  function update() {
+    const diff = target - Date.now();
+    if (diff <= 0) { document.getElementById('cw-time').textContent = '00:00:00'; return; }
+    const hh = String(Math.floor(diff / 3600000)).padStart(2,'0');
+    const mm = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+    const ss = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+    document.getElementById('cw-time').textContent = `${hh}:${mm}:${ss}`;
+  }
+  update();
+  setInterval(update, 1000);
+})();
+
+// ════════════════════════════════════════
+// POP BUKTI SOSIAL (KANAN ATAS)
+// ════════════════════════════════════════
+const notifData = [
+  { name:"Nur Azlina",    city:"Shah Alam",    act:"membeli pakej",              init:"NA", grad:"linear-gradient(135deg,#00B4A0,#2563EB)", time:"2 minit yang lalu" },
+  { name:"Ahmad Farouk",  city:"Kuala Lumpur", act:"mendaftar sebagai Rakan Affiliate", init:"AF", grad:"linear-gradient(135deg,#FF5733,#FF8C00)", time:"5 minit yang lalu" },
+  { name:"Siti Zulaikha", city:"Johor Bahru",  act:"membeli pakej",              init:"SZ", grad:"linear-gradient(135deg,#7C3AED,#2563EB)", time:"7 minit yang lalu" },
+  { name:"Mohd Hisyam",   city:"Pulau Pinang", act:"mendaftar sebagai Rakan Affiliate", init:"MH", grad:"linear-gradient(135deg,#059669,#00B4A0)", time:"11 minit yang lalu" },
+  { name:"Rashidah Omar", city:"Seremban",     act:"membeli pakej",              init:"RO", grad:"linear-gradient(135deg,#F59E0B,#FF8C00)", time:"14 minit yang lalu" },
+  { name:"Fadzrul Hakim", city:"Kuching",      act:"mendaftar sebagai Rakan Affiliate", init:"FH", grad:"linear-gradient(135deg,#EC4899,#7C3AED)", time:"18 minit yang lalu" },
+  { name:"Nurul Izzah",   city:"Kota Bharu",   act:"membeli pakej",              init:"NI", grad:"linear-gradient(135deg,#00B4A0,#059669)", time:"22 minit yang lalu" },
+  { name:"Zulhilmi Abd",  city:"Ipoh",         act:"mendaftar sebagai Rakan Affiliate", init:"ZA", grad:"linear-gradient(135deg,#2563EB,#7C3AED)", time:"26 minit yang lalu" },
+];
+let nIdx = 0;
+function showNotif() {
+  const d = notifData[nIdx % notifData.length];
+  const bar = document.getElementById('notif');
+  document.getElementById('n-av').textContent = d.init;
+  document.getElementById('n-av').style.background = d.grad;
+  document.getElementById('n-name').textContent = d.name;
+  document.getElementById('n-city').textContent = d.city;
+  document.getElementById('n-act').textContent = d.act;
+  document.getElementById('n-time').textContent = d.time;
+  bar.classList.add('show');
+  setTimeout(() => bar.classList.remove('show'), 4500);
+  nIdx++;
+}
+setTimeout(() => showNotif(), 3500);
+setInterval(() => showNotif(), 20000);
+
+// ════════════════════════════════════════
+// KALKULATOR KOMISYEN (RM40 / JUALAN)
+// ════════════════════════════════════════
+const KOMISYEN_TETAP = 40; // RM40.00 (50% daripada RM80.00)
+[5, 10, 20, 50].forEach((s, i) => {
+  const jumlah = s * KOMISYEN_TETAP;
+  document.getElementById('k' + (i + 1)).textContent =
+    'RM' + jumlah.toLocaleString('ms-MY');
+});
+
+// ════════════════════════════════════════
+// AKORDION SOALAN LAZIM
+// ════════════════════════════════════════
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ════════════════════════════════════════
+// ANIMASI TIMBUL SEMASA SKROL
+// ════════════════════════════════════════
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
